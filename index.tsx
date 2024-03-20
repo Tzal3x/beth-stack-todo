@@ -44,6 +44,23 @@ const app = new Elysia()
       }),
     },
   )
+  .post(
+    "/todo",
+    ({ body }) => {
+      const newTodo = {
+        id: lastID++,
+        content: body.content,
+        completed: false,
+      };
+      db.push(newTodo);
+      return <TodoItem {...newTodo} />;
+    },
+    {
+      body: t.Object({
+        content: t.String(),
+      }),
+    },
+  )
   .delete(
     "/todo/:id",
     ({ params }) => {
@@ -107,7 +124,19 @@ const TodoList = ({ todos }: { todos: Todo[] }) => {
       {todos.map((todo) => (
         <TodoItem {...todo} />
       ))}
+      <TodoForm />
     </div>
+  );
+};
+
+const TodoForm = () => {
+  return (
+    <form hx-post="/todo" hx-swap="beforebegin">
+      <input type="text" name="content" class={"border-2"} />
+      <button type="submit" class={"rounded-lg bg-blue-500 p-1 text-white"}>
+        Add
+      </button>
+    </form>
   );
 };
 
@@ -122,3 +151,5 @@ let db: Todo[] = [
   { id: 2, content: "Learn HTMX", completed: false },
   { id: 3, content: "Integrate ElysiaJS", completed: false },
 ];
+
+let lastID = db.length;
