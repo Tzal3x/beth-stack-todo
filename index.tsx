@@ -30,7 +30,6 @@ const app = new Elysia()
   .post(
     "/todo/toggle/:id",
     ({ params }) => {
-      console.log("CHECKED!");
       const todo = db.find((todo) => todo.id === Number(params.id));
       if (todo) {
         todo.completed = !todo.completed;
@@ -44,6 +43,20 @@ const app = new Elysia()
         id: t.Numeric(),
       }),
     },
+  )
+  .delete(
+    "/todo/:id",
+    ({ params }) => {
+      const todo = db.find((todo) => todo.id === Number(params.id));
+      if (!todo) {
+        console.error(`Todo with id ${params.id} not found`);
+        return;
+      }
+      db.splice(db.indexOf(todo), 1);
+      // Not returning anything -> hx-delete will swap closest div with nothing,
+      // Which is the same as deleting this todo item.
+    },
+    { params: t.Object({ id: t.Numeric() }) },
   )
   .listen(3000);
 
@@ -76,14 +89,21 @@ const TodoItem = ({ content, completed, id }: Todo) => {
         hx-target="closest div"
         hx-swap="outerHTML"
       />
-      <button class={"text-red-500"}>X</button>
+      <button
+        class={"text-red-500"}
+        hx-delete={`/todo/${id}`}
+        hx-target="closest div"
+        hx-swap="outerHTML"
+      >
+        X
+      </button>
     </div>
   );
 };
 
 const TodoList = ({ todos }: { todos: Todo[] }) => {
   return (
-    <div>
+    <div id="todo-list">
       {todos.map((todo) => (
         <TodoItem {...todo} />
       ))}
@@ -99,6 +119,6 @@ type Todo = {
 
 let db: Todo[] = [
   { id: 1, content: "Learn about Bun", completed: false },
-  // { id: 2, content: "Learn HTMX", completed: false },
-  // { id: 3, content: "Integrate ElysiaJS", completed: false },
+  { id: 2, content: "Learn HTMX", completed: false },
+  { id: 3, content: "Integrate ElysiaJS", completed: false },
 ];
