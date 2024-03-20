@@ -7,13 +7,21 @@ const app = new Elysia()
   .get("/", () => (
     <BaseHtml>
       <body>
-        <button hx-post="/clicked" hx-swap="outerHTML">
+        <button
+          hx-post="/clicked"
+          hx-swap="outerHTML"
+          class="flex h-screen w-full items-center justify-center bg-blue-500 text-white"
+        >
           Click me
         </button>
       </body>
     </BaseHtml>
   ))
-  .post("/clicked", () => <div>I'm from the server!</div>)
+  .post("/clicked", () => (
+    <div class="flex h-screen w-full items-center justify-center bg-white text-blue-500">
+      I'm from the server!
+    </div>
+  ))
   .listen(3000);
 
 console.log(
