@@ -4,3 +4,11 @@ A simple TODO app built using the BETH stack: [Bun](https://bun.sh/) runtime, [E
 Link to the tutorial that I followed: https://www.youtube.com/watch?v=cpzowDDJj24&ab_channel=EthanNiser. 
 
 > **Notes after implementation:** Elysia JS was fun and straightforward to work with. Bun is ineeded a very fast batteries-included runtime. I did not integrate Turso DB - my main focus was to get in touch with HTMX. 
+
+## Instructions
+
+### Install dependencies
+`bun install`
+
+### Run the app
+`bun run --watch index.tsx # --watch is optional`
