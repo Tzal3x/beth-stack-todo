@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import * as elements from "typed-html";
 
@@ -17,12 +17,34 @@ const app = new Elysia()
       </body>
     </BaseHtml>
   ))
-  .get("/todo", () => <TodoList todos={db} />)
+  .get("/todo", () => (
+    <BaseHtml>
+      <TodoList todos={db} />
+    </BaseHtml>
+  ))
   .post("/clicked", () => (
     <div class="flex h-screen w-full items-center justify-center bg-white text-blue-500">
       I'm from the server!
     </div>
   ))
+  .post(
+    "/todo/toggle/:id",
+    ({ params }) => {
+      console.log("CHECKED!");
+      const todo = db.find((todo) => todo.id === Number(params.id));
+      if (todo) {
+        todo.completed = !todo.completed;
+        return <TodoItem {...todo} />;
+      } else {
+        console.log(`Todo with id ${params.id} not found`);
+      }
+    },
+    {
+      params: t.Object({
+        id: t.Numeric(),
+      }),
+    },
+  )
   .listen(3000);
 
 console.log(
@@ -46,7 +68,14 @@ const TodoItem = ({ content, completed, id }: Todo) => {
   return (
     <div class="flex flex-row space-x-3">
       <p>{content}</p>
-      <input type="checkbox" checked={completed} />
+      <input
+        type="checkbox"
+        checked={completed}
+        hx-post={`/todo/toggle/${id}`}
+        hx-trigger="change"
+        hx-target="closest div"
+        hx-swap="outerHTML"
+      />
       <button class={"text-red-500"}>X</button>
     </div>
   );
