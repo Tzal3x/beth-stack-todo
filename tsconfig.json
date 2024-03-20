@@ -5,7 +5,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
+    "jsx": "react",
+    "jsxFactory": "elements.createElement",
     "allowJs": true,
 
     // Bundler mode

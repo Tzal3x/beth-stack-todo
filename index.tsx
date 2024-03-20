@@ -1,16 +1,23 @@
 import { Elysia } from "elysia";
 import { html } from "@elysiajs/html";
+import * as elements from "typed-html";
 
 const app = new Elysia()
   .use(html())
-  .get("/", ({ html }) => html(baseHtml))
+  .get("/", ({ html }) =>
+    html(
+      <BaseHtml>
+        <h1>Hello, world!</h1>
+      </BaseHtml>,
+    ),
+  )
   .listen(3000);
 
 console.log(
   `🦊 Server is running on http://${app.server?.hostname}:${app.server?.port}`,
 );
 
-const baseHtml = `
+const BaseHtml = ({ children }: any) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -18,8 +25,5 @@ const baseHtml = `
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>The BETH stack</title>
     </head>
-    <body>
-      That's the BETH stack!
-    </body>
-  </html>
+    ${children}
   `;
